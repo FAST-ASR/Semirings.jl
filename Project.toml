@@ -2,3 +2,6 @@ name = "SemifieldAlgebra"
 uuid = "bcec86f5-ca56-4bff-b104-0763dbc0fc1b"
 authors = ["Lucas Ondel <iondel@fit.vutbr.cz>"]
 version = "0.1.0"
+
+[compat]
+julia = 1.6
