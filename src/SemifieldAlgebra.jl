@@ -26,8 +26,6 @@ Base.zero(::Type{Semifield{T,A,M,MI,Z,O}}) where {T,A,M,MI,Z,O} = Semifield{T,A,
 Base.zero(::Semifield{T,A,M,MI,Z,O}) where {T,A,M,MI,Z,O} = Semifield{T,A,M,MI,Z,O}(Z)
 Base.one(::Type{Semifield{T,A,M,MI,Z,O}})  where {T,A,M,MI,Z,O} = Semifield{T,A,M,MI,Z,O}(O)
 Base.one(::Semifield{T,A,M,MI,Z,O}) where {T,A,M,MI,Z,O} = Semifield{T,A,M,MI,Z,O}(O)
-Base.promote_rule(T::Type{Semifield}, ::Type{Number}) = T
-Base.convert(T::Type{<:Number}, x::Semifield) = T(x.val)
 
 end
 
