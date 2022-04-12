@@ -1,6 +1,6 @@
 # Lucas Ondel, 2021
 
-using SemifieldAlgebra
+using Semirings
 using Test
 
 const TropicalSemifield{T} = Semifield{T, max, +, -, -Inf, 0} where T

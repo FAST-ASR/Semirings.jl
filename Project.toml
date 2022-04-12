@@ -1,7 +1,7 @@
-name = "SemifieldAlgebra"
-uuid = "bcec86f5-ca56-4bff-b104-0763dbc0fc1b"
-authors = ["Lucas Ondel <iondel@fit.vutbr.cz>"]
-version = "0.1.0"
+name = "Semirings"
+uuid = "900aad66-9ca5-44d4-b043-321c62cb7767"
+authors = ["Lucas Ondel <lucas.ondel@gmail.com>"]
+version = "0.2.0"
 
 [compat]
-julia = "1.6"
+julia = "1.7"
