@@ -1,7 +1,7 @@
 # Semirings.jl
 
-A julia package (largely inspired from [SemiringAlgebra](https://github.com/JuliaComputing/SemiringAlgebra.jl))
-which provides computations in an aribtrary [semiring](https://en.wikipedia.org/wiki/Semiring).
+A julia package (largely inspired from [SemiringAlgebra](https://github.com/JuliaComputing/SemiringAlgebra.jl) and [mcognetta/Semirings.jl](https://github.com/mcognetta/Semirings.jl))
+which provides implementation of common [semirings](https://en.wikipedia.org/wiki/Semiring).
 
 [![Test](https://github.com/FAST-ASR/Semirings.jl/actions/workflows/Test.yml/badge.svg)](https://github.com/FAST-ASR/Semirings.jl/actions/workflows/Test.yml)
 
