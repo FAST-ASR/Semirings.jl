@@ -1,21 +1,39 @@
-# Lucas Ondel, 2021
-
 using Semirings
+import LogExpFunctions: logaddexp
 using Test
 
-const TropicalSemifield{T} = Semifield{T, max, +, -, -Inf, 0} where T
-const _x = 1.6
-const _y = -11.3
-
-for T in [Float32, Float64]
-    x = TropicalSemifield{T}(_x)
-    y = TropicalSemifield{T}(_y)
-
-    @test (x + y).val ≈ _x
-    @test (x * y).val ≈ _x + _y
-    @test (x / y).val ≈ _x - _y
-    @test zero(typeof(x)).val == -Inf
-    @test zero(TropicalSemifield{T}).val == -Inf
-    @test one(typeof(x)).val == 0
-    @test one(TropicalSemifield{T}).val == 0
+@testset "Boolean semiring" begin
+    x, y = one(BoolSemiring), zero(BoolSemiring)
+    @test x.val # one is true
+    @test !y.val # zero is false
+    @test (x + y).val
+    @test (x + x).val
+    @test !(y + y).val
+    @test !(x * y).val
+    @test (x * x).val
+    @test !(y * y).val
+    @test IsDivisible(BoolSemiring) == NotDivisible()
+    @test IsIdempotent(BoolSemiring) == Idempotent()
+    @test IsOrdered(BoolSemiring) == Unordered()
 end
+
+@testset "Logarithmic semiring" begin
+    Ts = [Int64, Int32, Float64, Float32]
+
+    for T in Ts
+        @test iszero(one(LogSemiring{T}).val)
+        @test zero(LogSemiring{T}).val == float(T)(-Inf)
+    end
+
+    for T1 in Ts, T2 in Ts
+        x, y = LogSemiring(T1(2)), LogSemiring(T2(3))
+        @test (x + y).val ≈ logaddexp(x.val, y.val)
+        @test (x * y).val ≈ x.val + y.val
+        @test (x / y).val ≈ x.val - y.val
+        @test x <=  y
+        @test IsDivisible(LogSemiring) == Divisible()
+        @test IsIdempotent(LogSemiring) == NotIdempotent()
+        @test IsOrdered(LogSemiring) == Ordered()
+    end
+end
+
