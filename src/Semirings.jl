@@ -1,4 +1,4 @@
-module SemifieldAlgebra
+module Semirings
 
 export Semifield
 
