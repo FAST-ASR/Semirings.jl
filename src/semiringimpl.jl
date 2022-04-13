@@ -131,39 +131,46 @@ Base.typemax(x::Type{TropicalSemiring{T}}) where T =
     TropicalSemiring{T}(typemax(float(T)))
 
 #======================================================================
-alternation-concatenation-semiring
+Union-Concatenation semiring
 ======================================================================#
 
-#const SymbolSequence{N} = NTuple{N, Any} where N
-#SymbolSequence(syms) = SymbolSequence{length(syms)}(syms)
-#
-#"""
-#    struct ACSemiring <: Semiring
-#        val::Set{<:SymbolSequence}
-#    end
-#
-#Union-Concatenation semiring.
-#"""
-#struct UnionConcatSemiring <: Semiring
-#    val::Set{<:SymbolSequence}
-#end
-#
-#Base.:+(x::UnionConcatSemiring, y::UnionConcatSemiring) =
-#    UnionConcatSemiring(union(x.val, y.val))
-#function Base.:*(x::ACSemiring, y::ACSemiring)
-#    newseqs = Set{SymbolSequence}()
-#    for xᵢ in x.val
-#        for yᵢ in y.val
-#            push!(newseqs, SymbolSequence(vcat(xᵢ..., yᵢ...)))
-#        end
-#    end
-#    ACSemiring(newseqs)
-#end
-#
-#Base.zero(::ACSemiring) = ACSemiring(Set{SymbolSequence}())
-#Base.one(::ACSemiring) = ACSemiring(Set([tuple()]))
-#Base.conj(x::ACSemiring) = identity
-#
-#
+const SymbolSequence{N} = NTuple{N, Any} where N
+SymbolSequence(syms) = SymbolSequence{length(syms)}(syms)
+SymbolSequence() = SymbolSequence{0}()
 
+"""
+    struct UnionConcatSemiring <: Semiring
+        val::Set{<:SymbolSequence}
+    end
+
+Union-Concatenation semiring: ``R = (ℝ, ∪, concat, {}, {""})`` over
+set of symbol sequence.
+
+See also: [`SymbolSequence`](@ref).
+"""
+struct UnionConcatSemiring <: Semiring{Set{SymbolSequence}}
+    val::Set{SymbolSequence}
+end
+UnionConcatSemiring(x::SymbolSequence) = UnionConcatSemiring(Set([x]))
+
+IsIdempotent(::Type{<:UnionConcatSemiring}) = Idempotent()
+
+Base.:+(x::UnionConcatSemiring, y::UnionConcatSemiring) =
+    UnionConcatSemiring(union(x.val, y.val))
+
+function Base.:*(x::UnionConcatSemiring, y::UnionConcatSemiring)
+    newseqs = Set{SymbolSequence}()
+    for xᵢ in x.val
+        for yᵢ in y.val
+            push!(newseqs, SymbolSequence(vcat(xᵢ..., yᵢ...)))
+        end
+    end
+    UnionConcatSemiring(newseqs)
+end
+
+Base.zero(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set{SymbolSequence}())
+Base.one(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set([tuple()]))
+Base.conj(x::UnionConcatSemiring) = identity
+Base.:(==)(x::UnionConcatSemiring, y::UnionConcatSemiring) = issetequal(x.val, y.val)
+Base.:(≈)(x::UnionConcatSemiring, y::UnionConcatSemiring) = x == y
 

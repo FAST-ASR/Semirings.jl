@@ -71,9 +71,26 @@ end
     end
 end
 
+@testset "Union-Concatenation semiring" begin
+    @test issetequal(zero(UnionConcatSemiring).val, Set())
+    @test issetequal(one(UnionConcatSemiring).val, Set([SymbolSequence()]))
+
+    valx, valy = SymbolSequence([:a, :b]), SymbolSequence([:a, :b, :c])
+    @test UnionConcatSemiring(valx) == UnionConcatSemiring(Set([valx]))
+
+    x, y = UnionConcatSemiring(valx), UnionConcatSemiring(valy)
+    @test issetequal((x + y).val, union(Set([valx]), Set([valy])))
+
+    z = UnionConcatSemiring(Set([
+            SymbolSequence([:a, :b, :a, :b]),
+            SymbolSequence([:a, :b, :a, :b, :c])]))
+
+    @test issetequal((x * (x + y)).val, z.val)
+end
+
 @testset "Semiring properties" begin
     # Unordered semirings
-    for T in [BoolSemiring]
+    for T in [BoolSemiring, UnionConcatSemiring]
         @test IsOrdered(T) == Unordered()
         @test_throws DomainError typemin(T)
         @test_throws DomainError typemin(one(T))
@@ -89,7 +106,7 @@ end
     end
 
     # Not divisible semirings
-    for T in [BoolSemiring]
+    for T in [BoolSemiring, UnionConcatSemiring]
         @test IsDivisible(T) == NotDivisible()
         @test_throws DomainError one(T) / one(T)
     end
@@ -106,9 +123,18 @@ end
     end
 
     # Idempotent semirings
-    for T in [BoolSemiring, TropicalSemiring]
+    for T in [BoolSemiring, TropicalSemiring, UnionConcatSemiring]
         @test IsIdempotent(T) == Idempotent()
         @test one(T) + one(T) ≈ one(T)
+    end
+end
+
+@testset "Conjugate" begin
+    Ts = [BoolSemiring, LogSemiring, ProbSemiring, TropicalSemiring,
+          UnionConcatSemiring]
+    for T in Ts
+        x = ones(T, 10)
+        @test all(x .≈ (x')')
     end
 end
 
