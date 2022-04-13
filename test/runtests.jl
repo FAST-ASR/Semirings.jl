@@ -12,9 +12,63 @@ using Test
     @test !(x * y).val
     @test (x * x).val
     @test !(y * y).val
-    @test IsDivisible(BoolSemiring) == NotDivisible()
-    @test IsIdempotent(BoolSemiring) == Idempotent()
-    @test IsOrdered(BoolSemiring) == Unordered()
+end
+
+@testset "Logarithmic semiring" begin
+    Ts = [Int64, Int32, Float64, Float32]
+
+    @test one(LogSemiring).val == float(Real)(0)
+    @test zero(LogSemiring).val == float(Real)(-Inf)
+    for T in Ts
+        @test one(LogSemiring{T}).val == float(T)(0)
+        @test zero(LogSemiring{T}).val == float(T)(-Inf)
+    end
+
+    for T1 in Ts, T2 in Ts
+        x, y = LogSemiring(T1(2)), LogSemiring(T2(3))
+        @test (x + y).val ≈ logaddexp(x.val, y.val)
+        @test (x * y).val ≈ x.val + y.val
+        @test (x / y).val ≈ x.val - y.val
+        @test x <=  y
+    end
+end
+
+@testset "Probability semiring" begin
+    Ts = [Int64, Int32, Float64, Float32]
+
+    @test one(ProbSemiring).val == one(float(Real))
+    @test zero(ProbSemiring).val == zero(float(Real))
+    for T in Ts
+        @test one(ProbSemiring{T}).val == one(float(T))
+        @test zero(ProbSemiring{T}).val == zero(float(T))
+    end
+
+    for T1 in Ts, T2 in Ts
+        x, y = ProbSemiring(T1(2)), ProbSemiring(T2(3))
+        @test (x + y).val ≈ x.val + y.val
+        @test (x * y).val ≈ x.val * y.val
+        @test (x / y).val ≈ x.val / y.val
+        @test x <=  y
+    end
+end
+
+@testset "Tropical semiring" begin
+    Ts = [Int64, Int32, Float64, Float32]
+
+    @test one(TropicalSemiring).val == float(Real)(0)
+    @test zero(TropicalSemiring).val == float(Real)(-Inf)
+    for T in Ts
+        @test one(TropicalSemiring{T}).val == float(T)(0)
+        @test zero(TropicalSemiring{T}).val == float(T)(-Inf)
+    end
+
+    for T1 in Ts, T2 in Ts
+        x, y = TropicalSemiring(T1(2)), TropicalSemiring(T2(3))
+        @test (x + y).val ≈ max(x.val, y.val)
+        @test (x * y).val ≈ x.val + y.val
+        @test (x / y).val ≈ x.val - y.val
+        @test x <=  y
+    end
 end
 
 @testset "Semiring properties" begin
@@ -29,7 +83,7 @@ end
     end
 
     # Ordered semirings
-    for T in [LogSemiring]
+    for T in [LogSemiring, ProbSemiring, TropicalSemiring]
         @test IsOrdered(T) == Ordered()
         @test one(T) > zero(T)
     end
@@ -41,41 +95,20 @@ end
     end
 
     # Divisible semirings
-    for T in [LogSemiring]
+    for T in [LogSemiring, ProbSemiring, TropicalSemiring]
         @test IsDivisible(T) == Divisible()
         @test one(T) ≈ (one(T) + one(T)) / (one(T) + one(T))
     end
 
-    # Not idempotent semiring
-    for T in [LogSemiring]
+    # Not idempotent semirings
+    for T in [LogSemiring, ProbSemiring]
         @test IsIdempotent(T) == NotIdempotent()
     end
 
-    # Not idempotent semiring
-    for T in [LogSemiring]
-        @test IsIdempotent(T) == NotIdempotent()
-    end
-end
-
-
-@testset "Logarithmic semiring" begin
-    Ts = [Int64, Int32, Float64, Float32]
-
-    for T in Ts
-        @test iszero(one(LogSemiring{T}).val)
-        @test zero(LogSemiring{T}).val == float(T)(-Inf)
-
-    end
-
-    for T1 in Ts, T2 in Ts
-        x, y = LogSemiring(T1(2)), LogSemiring(T2(3))
-        @test (x + y).val ≈ logaddexp(x.val, y.val)
-        @test (x * y).val ≈ x.val + y.val
-        @test (x / y).val ≈ x.val - y.val
-        @test x <=  y
-        @test IsDivisible(LogSemiring) == Divisible()
-        @test IsIdempotent(LogSemiring) == NotIdempotent()
-        @test IsOrdered(LogSemiring) == Ordered()
+    # Idempotent semirings
+    for T in [BoolSemiring, TropicalSemiring]
+        @test IsIdempotent(T) == Idempotent()
+        @test one(T) + one(T) ≈ one(T)
     end
 end
 
