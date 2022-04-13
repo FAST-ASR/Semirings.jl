@@ -27,80 +27,38 @@ Abstract semiring
 ======================================================================#
 
 """
-    Semiring
+    Semiring{T} <: Number
 
 Supertype for semirings. A semiring ``S = (R, ⊕, ⊗, 0̄, 1̄)`` with
 a set ``R``, an "addition" operation ``⊕`` and a "multiplication"
 operation ``⊗``.
 """
-abstract type Semiring <: Number end
+abstract type Semiring{T} <: Number end
 
-Base.zero(x::T) where T<:Semiring = zero(T)
-Base.one(x::T) where T<:Semiring = one(T)
 Base.conj(x::Semiring) = conj(x.val)
 Base.promote_rule(x::Type{Semiring}, y::Type{Number}) = Semiring
+Base.:(==)(x::Semiring, y::Semiring) = x.val == y.val
+Base.:(≈)(x::Semiring, y::Semiring) = x.val ≈ y.val
 Base.show(io::IO, x::Semiring) = print(io, x.val)
 
 #======================================================================
 Semiring properties
 ======================================================================#
 
-"""
-    SemiringProperty
-
-Supertype for semiring properties.
-"""
-abstract type SemiringProperty end
-
-"""
-    IsDivisible <: SemiringProperty
-
-Divisible property of a semiring. A semiring is *divisible* if all its
-elements ``x`` but ``0`` has an inverse ``z`` such that ``x * z = 1``.
-"""
-abstract type IsDivisible <: SemiringProperty end
-
-struct Divisible<: IsDivisible end
-struct NotDivisible <: IsDivisible end
-IsDivisible(::Type) = NotDivisible()
-
-"""
-    IsIdempotent <: SemiringProperty
-
-Idempotent property of a semiring. A semiring is *idempotent* if
-``x + x = x`` for all ``x``.
-"""
-abstract type IsIdempotent <: SemiringProperty end
-
-struct Idempotent <: IsIdempotent end
-struct NotIdempotent <: IsIdempotent end
-IsIdempotent(::Type) = NotIdempotent()
-
-"""
-    IsOrdered <: SemiringProperty
-
-Ordered property of a semiring. A semiring is *ordered* if:
-  1. ``a + c ≤ b + c``, ``∀ a,b,c ∈ R`` and ``a ≤ b``
-  2. ``ac ≤ bc`` and ``ca ≤ cb``, ``∀ a, b, c ∈ R``, ``0 ≤ c`` and ``a ≤ b``
-"""
-abstract type IsOrdered <: SemiringProperty end
-
-struct Ordered <: IsOrdered end
-struct Unordered <: IsOrdered end
-IsOrdered(::Type) = Unordered()
+include("properties.jl")
 
 #======================================================================
 Boolean semiring
 ======================================================================#
 
 """
-    struct Boolsemiring <: Semiring
+    struct BoolSemiring <: Semiring{Bool}
         val::Bool
     end
 
 Boolean semiring: ``R = ({true, false}, ∨, ∧, false, true)``.
 """
-struct BoolSemiring <: Semiring
+struct BoolSemiring <: Semiring{Bool}
     val::Bool
 end
 
@@ -116,13 +74,13 @@ Logarithmic semiring
 ======================================================================#
 
 """
-    struct LogSemiring{T<:Real} <: Semiring
+    struct LogSemiring{T<:Real} <: Semiring{T}
         val::T
     end
 
 Logarithmic semiring: ``R = (ℝ, ln(eˣ + eʸ), +, -∞, 0)``.
 """
-struct LogSemiring{T<:Real} <: Semiring
+struct LogSemiring{T<:Real} <: Semiring{T}
     val::T
 end
 
@@ -137,12 +95,41 @@ IsDivisible(::Type{<:LogSemiring}) = Divisible()
 Base.:+(x::LogSemiring, y::LogSemiring) = LogSemiring(logaddexp(x.val, y.val))
 Base.:*(x::LogSemiring, y::LogSemiring) = LogSemiring(x.val + y.val)
 Base.:/(x::LogSemiring, y::LogSemiring) = LogSemiring(x.val - y.val)
+Base.zero(::Type{LogSemiring}) = LogSemiring(float(Real)(-Inf))
+Base.one(::Type{LogSemiring}) = LogSemiring(zero(float(Real)))
 Base.zero(::Type{LogSemiring{T}}) where T = LogSemiring(float(T)(-Inf))
 Base.one(::Type{LogSemiring{T}}) where T = LogSemiring(zero(T))
 Base.:<(x::LogSemiring, y::LogSemiring) = x.val < y.val
-Base.:(==)(x::LogSemiring, y::LogSemiring) = x.val == y.val
 Base.typemin(x::Type{LogSemiring{T}}) where T = LogSemiring{T}(typemin(T))
 Base.typemax(x::Type{LogSemiring{T}}) where T = LogSemiring{T}(typemax(T))
+
+#======================================================================
+Tropical semiring
+======================================================================#
+
+"""
+    struct TropicalSemiring{T<:Real} <: Semiring{T}
+        val::T
+    end
+
+Tropical semiring: ``R = (ℝ, max, +, -∞, 0)``.
+"""
+struct TropicalSemiring{T<:Real} <: Semiring{T}
+    val::T
+end
+
+Base.:+(x::TropicalSemiring, y::TropicalSemiring) =
+    TropicalSemiring(max(x.val, y.val))
+Base.:*(x::TropicalSemiring, y::TropicalSemiring) =
+    TropicalSemiring(x.val + y.val)
+Base.zero(::Type{TropicalSemiring{T}}) where T = TropicalSemiring{T}(T(-Inf))
+Base.one(::Type{TropicalSemiring{T}}) where T = TropicalSemiring{T}(T(0))
+Base.isless(x::TropicalSemiring, y::TropicalSemiring) = isless(x.val, y.val)
+Base.typemin(x::Type{TropicalSemiring{T}}) where T =
+    TropicalSemiring{T}(typemin(T))
+Base.typemax(x::Type{TropicalSemiring{T}}) where T =
+    TropicalSemiring{T}(typemax(T))
+Base.conj(x::TropicalSemiring{T}) where T = TropicalSemiring{T}(conj(x.val))
 
 #======================================================================
 alternation-concatenation-semiring
