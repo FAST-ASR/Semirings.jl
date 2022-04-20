@@ -61,7 +61,6 @@ IsOrdered(Tx::Type, Ty::Type) =
 Base.typemin(T::Type{<:Semiring}) = Base.typemin(IsOrdered(T), T)
 Base.typemin(x::Semiring) = Base.typemin(IsOrdered(typeof(x)), typeof(x))
 Base.typemin(::Unordered, ::Type{<:Semiring}) = _notdefinedfor(Unordered)
-Base.typemin(::Ordered, ::Type{Semiring{T}}) where T= Base.typemin(T)
 
 Base.typemax(T::Type{<:Semiring}) = Base.typemax(IsOrdered(T), T)
 Base.typemax(x::Semiring) = Base.typemax(IsOrdered(typeof(x)), typeof(x))

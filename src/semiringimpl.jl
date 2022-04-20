@@ -11,7 +11,7 @@ Boolean semiring
 
 Boolean semiring: ``R = ({true, false}, ∨, ∧, false, true)``.
 """
-struct BoolSemiring <: Semiring{Bool}
+struct BoolSemiring <: Semiring
     val::Bool
 end
 
@@ -33,7 +33,7 @@ Logarithmic semiring
 
 Logarithmic semiring: ``R = (ℝ, ln(eˣ + eʸ), +, -∞, 0)``.
 """
-struct LogSemiring{T<:Real} <: Semiring{T}
+struct LogSemiring{T<:Real} <: Semiring
     val::T
 end
 
@@ -69,7 +69,7 @@ Probability semiring
 
 Probability semiring: ``R = (ℝ, +, ⋅, 0, +∞)``.
 """
-struct ProbSemiring{T<:Real} <: Semiring{T}
+struct ProbSemiring{T<:Real} <: Semiring
     val::T
 end
 
@@ -104,7 +104,7 @@ Tropical semiring
 
 Tropical semiring: ``R = (ℝ, max, +, -∞, 0)``.
 """
-struct TropicalSemiring{T<:Real} <: Semiring{T}
+struct TropicalSemiring{T<:Real} <: Semiring
     val::T
 end
 
@@ -148,7 +148,7 @@ set of symbol sequence.
 
 See also: [`SymbolSequence`](@ref).
 """
-struct UnionConcatSemiring <: Semiring{Set{SymbolSequence}}
+struct UnionConcatSemiring <: Semiring
     val::Set{SymbolSequence}
 end
 UnionConcatSemiring(x::SymbolSequence) = UnionConcatSemiring(Set([x]))
