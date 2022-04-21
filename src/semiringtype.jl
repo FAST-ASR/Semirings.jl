@@ -13,6 +13,8 @@ Base.conj(x::Semiring) = typeof(x)(conj(x.val))
 Base.promote_rule(x::Type{Semiring}, y::Type{Number}) = x
 Base.:(==)(x::Semiring, y::Semiring) = x.val == y.val
 Base.:(≈)(x::Semiring, y::Semiring) = x.val ≈ y.val
+Base.zero(x::T) where T <: Semiring = zero(T)
+Base.one(x::T) where T <: Semiring = one(T)
 Base.show(io::IO, x::T) where T<:Semiring = print(io, T, "(", x.val, ")")
 Base.show(io::IO, ::MIME"text/plain", x::T) where T<:Semiring = print(io, x.val)
 #Base.print(io::IO, x::T) where T<:Semiring = print(io, x.val)

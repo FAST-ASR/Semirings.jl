@@ -129,12 +129,23 @@ end
     end
 end
 
-@testset "Conjugate" begin
+@testset "General methods" begin
     Ts = [BoolSemiring, LogSemiring, ProbSemiring, TropicalSemiring,
           UnionConcatSemiring]
+
     for T in Ts
         x = ones(T, 10)
         @test all(x .≈ (x')')
+    end
+
+    for T in Ts
+        x, y = zero(T), one(T)
+        @test zero(T) == zero(x)
+        @test iszero(x)
+        @test ! iszero(y)
+        @test one(T) == one(y)
+        @test ! isone(x)
+        @test isone(y)
     end
 end
 
