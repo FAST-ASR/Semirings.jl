@@ -86,6 +86,8 @@ end
             SymbolSequence([:a, :b, :a, :b, :c])]))
 
     @test issetequal((x * (x + y)).val, z.val)
+
+    @test conj(x + y) == (x + y)
 end
 
 @testset "Semiring properties" begin

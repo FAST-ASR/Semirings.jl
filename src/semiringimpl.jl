@@ -170,7 +170,7 @@ end
 
 Base.zero(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set{SymbolSequence}())
 Base.one(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set([tuple()]))
-Base.conj(x::UnionConcatSemiring) = identity
+Base.conj(x::UnionConcatSemiring) = x
 Base.:(==)(x::UnionConcatSemiring, y::UnionConcatSemiring) = issetequal(x.val, y.val)
 Base.:(≈)(x::UnionConcatSemiring, y::UnionConcatSemiring) = x == y
 
