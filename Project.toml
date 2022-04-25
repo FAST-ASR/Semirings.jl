@@ -1,7 +1,7 @@
 name = "Semirings"
 uuid = "900aad66-9ca5-44d4-b043-321c62cb7767"
 authors = ["Lucas Ondel <lucas.ondel@gmail.com>"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 LogExpFunctions = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
