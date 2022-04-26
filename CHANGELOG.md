@@ -2,8 +2,10 @@
 
 ## 0.2.2
 
+* bugfix: `oneunit(x)` failing due to the impossibility to build
+  a semiring number from another semiring number
 * bugfix: `conj(x)` returning the identity function for the
-Union-Concatenation semiring.
+  Union-Concatenation semiring.
 
 ## 0.2.1
 

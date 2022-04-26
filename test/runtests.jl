@@ -148,6 +148,7 @@ end
         @test one(T) == one(y)
         @test ! isone(x)
         @test isone(y)
+        @test oneunit(x) == T(one(x))
     end
 end
 
