@@ -37,6 +37,7 @@ struct LogSemiring{T<:Real} <: Semiring
     val::T
 end
 
+
 Base.promote_rule(::Type{LogSemiring{Tx}}, ::Type{LogSemiring{Ty}}) where {Tx,Ty} =
     LogSemiring{promote_type(Tx, Ty)}
 Base.float(::Type{LogSemiring{T}}) where T = LogSemiring{float(T)}
@@ -174,3 +175,14 @@ Base.conj(x::UnionConcatSemiring) = x
 Base.:(==)(x::UnionConcatSemiring, y::UnionConcatSemiring) = issetequal(x.val, y.val)
 Base.:(≈)(x::UnionConcatSemiring, y::UnionConcatSemiring) = x == y
 
+#======================================================================
+global functions
+======================================================================#
+
+for K in [:BoolSemiring, :UnionConcatSemiring]
+    eval(:( $K(x::Semiring) = $K(x.val) ))
+end
+
+for K in [:LogSemiring, :ProbSemiring, :TropicalSemiring]
+    eval(:( $K{T}(x::Semiring) where T <: Real = $K{T}(x.val) ))
+end
