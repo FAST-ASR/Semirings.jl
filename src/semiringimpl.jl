@@ -181,8 +181,10 @@ global functions
 
 for K in [:BoolSemiring, :UnionConcatSemiring]
     eval(:( $K(x::Semiring) = $K(x.val) ))
+    eval(:( $K(x::Bool) = x ? one($K) : zero($K) ))
 end
 
 for K in [:LogSemiring, :ProbSemiring, :TropicalSemiring]
     eval(:( $K{T}(x::Semiring) where T <: Real = $K{T}(x.val) ))
+    eval(:( $K{T}(x::Bool) where T <: Real = x ? one($K{T}) : zero($K{T}) ))
 end

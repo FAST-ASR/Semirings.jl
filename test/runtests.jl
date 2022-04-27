@@ -149,6 +149,8 @@ end
         @test ! isone(x)
         @test isone(y)
         @test oneunit(x) == T(one(x))
+        @test isone(y * true) && isone(true * y)
+        @test iszero(y * false) && iszero(false * y)
     end
 end
 

@@ -2,6 +2,7 @@
 
 ## 0.2.2
 
+* bugfix: `K(true / false)` does not give the semiring 1 / 0.
 * bugfix: `oneunit(x)` failing due to the impossibility to build
   a semiring number from another semiring number
 * bugfix: `conj(x)` returning the identity function for the
