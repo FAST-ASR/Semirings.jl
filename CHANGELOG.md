@@ -1,7 +1,8 @@
 # Releases
 
-## 0.2.2
+## 0.3.0
 
+* added `val(x)` function to access the value of the semiring number
 * bugfix: `K(true / false)` does not give the semiring 1 / 0.
 * bugfix: `oneunit(x)` failing due to the impossibility to build
   a semiring number from another semiring number
