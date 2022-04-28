@@ -12,6 +12,7 @@ export LogSemiring
 export ProbSemiring
 export TropicalSemiring
 export UnionConcatSemiring, SymbolSequence
+export val
 
 # Semiring properties
 export SemiringProperty
