@@ -181,6 +181,9 @@ global functions
 
 for K in [:BoolSemiring, :UnionConcatSemiring]
     eval(:( $K(x::Semiring) = $K(x.val) ))
+end
+
+for K in [:UnionConcatSemiring]
     eval(:( $K(x::Bool) = x ? one($K) : zero($K) ))
 end
 
