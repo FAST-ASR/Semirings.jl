@@ -3,10 +3,11 @@
 ## 0.3.0
 ### Added
 - `val(x)` function to access the value of the semiring number
+- `abs(x)` return `x` for semiring values
 
 ### Fixed
 - `K(true / false)` does not give the semiring 1 / 0.
-- bugfix: `oneunit(x)` failing due to the impossibility to build
+- `oneunit(x)` failing due to the impossibility to build
   a semiring number from another semiring number
 - `conj(x)` returning the identity function for the Union-Concatenation
   semiring.

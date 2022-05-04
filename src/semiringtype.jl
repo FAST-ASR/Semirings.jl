@@ -11,6 +11,7 @@ abstract type Semiring <: Number end
 
 val(x::Semiring) = x.val
 Base.conj(x::Semiring) = typeof(x)(conj(x.val))
+Base.abs(x::Semiring) = x
 Base.promote_rule(x::Type{Semiring}, y::Type{Number}) = x
 Base.:(==)(x::Semiring, y::Semiring) = x.val == y.val
 Base.:(≈)(x::Semiring, y::Semiring) = x.val ≈ y.val
