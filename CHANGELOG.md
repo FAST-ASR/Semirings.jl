@@ -1,6 +1,11 @@
 # Releases
 
-## 0.3.0
+## 0.3.1
+### Fixed
+- Removed the `UnionAll` in the `show` method. This type signature was
+  causing printing issue with the PythonCall package.
+
+## [0.3.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.3.0) - 2022.05.04
 ### Added
 - `val(x)` function to access the value of the semiring number
 - `abs(x)` return `x` for semiring values
