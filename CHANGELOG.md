@@ -4,7 +4,7 @@
 ## Added
 - added the `StringSemiring`
 ## Changed
-- The Union-Concatenation semiring is now restricted to work on string
+- The Union-Concatenation semiring is now restricted to work on strings
   and not arbitrary sequences
 ### Fixed
 - Removed the `UnionAll` in the `show` method. This type signature was
