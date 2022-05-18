@@ -200,42 +200,35 @@ Base.:(≈)(x::StringSemiring, y::StringSemiring) = x == y
 Union-Concatenation semiring
 ======================================================================#
 
-const SymbolSequence{N} = NTuple{N, Any} where N
-SymbolSequence(syms) = SymbolSequence{length(syms)}(syms)
-SymbolSequence() = SymbolSequence{0}()
-
 """
     struct UnionConcatSemiring <: Semiring
-        val::Set{<:SymbolSequence}
+        val::Set{AbstractString}
     end
 
-Union-Concatenation semiring: ``R = (ℝ, ∪, concat, {}, {""})`` over
-set of symbol sequence.
-
-See also: [`SymbolSequence`](@ref).
+Union-Concatenation semiring: ``R = (\\Sigma\\^*, \\cup, \\cdot,
+\\{\\}, \\{\\epsilon\\})`` over set of symbol sequence.
 """
 struct UnionConcatSemiring <: Semiring
-    val::Set{SymbolSequence}
+    val::Set{AbstractString}
 end
-UnionConcatSemiring(x::SymbolSequence) = UnionConcatSemiring(Set([x]))
 
 IsIdempotent(::Type{<:UnionConcatSemiring}) = Idempotent
 
 Base.:+(x::UnionConcatSemiring, y::UnionConcatSemiring) =
-    UnionConcatSemiring(union(x.val, y.val))
+    UnionConcatSemiring(union(val(x), val(y)))
 
 function Base.:*(x::UnionConcatSemiring, y::UnionConcatSemiring)
-    newseqs = Set{SymbolSequence}()
-    for xᵢ in x.val
-        for yᵢ in y.val
-            push!(newseqs, SymbolSequence(vcat(xᵢ..., yᵢ...)))
+    newseqs = Set{AbstractString}()
+    for xᵢ in val(x)
+        for yᵢ in val(y)
+            push!(newseqs, xᵢ * yᵢ)
         end
     end
     UnionConcatSemiring(newseqs)
 end
 
-Base.zero(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set{SymbolSequence}())
-Base.one(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set([tuple()]))
+Base.zero(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set{AbstractString}())
+Base.one(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set{AbstractString}([""]))
 Base.conj(x::UnionConcatSemiring) = x
 Base.:(==)(x::UnionConcatSemiring, y::UnionConcatSemiring) = issetequal(x.val, y.val)
 Base.:(≈)(x::UnionConcatSemiring, y::UnionConcatSemiring) = x == y
