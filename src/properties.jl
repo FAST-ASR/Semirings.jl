@@ -21,13 +21,14 @@ elements ``x`` but ``0`` has an inverse ``z`` such that ``x * z = 1``.
 """
 abstract type IsDivisible <: SemiringProperty end
 
-struct Divisible<: IsDivisible end
+struct Divisible <: IsDivisible end
 struct NotDivisible <: IsDivisible end
-IsDivisible(::Type) = NotDivisible()
+Base.promote_rule(::Type{Divisible}, ::Type{NotDivisible}) = NotDivisible
+IsDivisible(::Type) = NotDivisible
 
 Base.:/(x::Semiring, y::Semiring) where T <: Semiring =
     Base.:/(IsDivisible(typeof(y)), x, y)
-Base.:/(::NotDivisible, x::Semiring, y::Semiring) =
+Base.:/(::Type{NotDivisible}, x::Semiring, y::Semiring) =
     _notdefinedfor(NotDivisible)
 
 """
@@ -40,7 +41,7 @@ abstract type IsIdempotent <: SemiringProperty end
 
 struct Idempotent <: IsIdempotent end
 struct NotIdempotent <: IsIdempotent end
-IsIdempotent(::Type) = NotIdempotent()
+IsIdempotent(::Type) = NotIdempotent
 
 """
     IsOrdered <: SemiringProperty
@@ -53,21 +54,21 @@ abstract type IsOrdered <: SemiringProperty end
 
 struct Ordered <: IsOrdered end
 struct Unordered <: IsOrdered end
-promote_rule(::Type{Ordered}, ::Type{Unordered}) = Unordered
-IsOrdered(::Type) = Unordered()
-IsOrdered(Tx::Type, Ty::Type) =
-    promote_type(typeof(IsOrdered(Tx)), typeof(IsOrdered(Ty)))()
+Base.convert(::Type{Unordered}, ::Ordered) = Unordered
+Base.convert(::Type{Ordered}, ::Unordered) = Unordered
+Base.promote_rule(::Type{Ordered}, ::Type{Unordered}) = Unordered
+IsOrdered(::Type) = Unordered
 
 Base.typemin(T::Type{<:Semiring}) = Base.typemin(IsOrdered(T), T)
 Base.typemin(x::Semiring) = Base.typemin(IsOrdered(typeof(x)), typeof(x))
-Base.typemin(::Unordered, ::Type{<:Semiring}) = _notdefinedfor(Unordered)
+Base.typemin(::Type{Unordered}, ::Type{<:Semiring}) = _notdefinedfor(Unordered)
 
 Base.typemax(T::Type{<:Semiring}) = Base.typemax(IsOrdered(T), T)
 Base.typemax(x::Semiring) = Base.typemax(IsOrdered(typeof(x)), typeof(x))
-Base.typemax(::Unordered, ::Type{<:Semiring}) = _notdefinedfor(Unordered)
+Base.typemax(::Type{Unordered}, ::Type{<:Semiring}) = _notdefinedfor(Unordered)
 
 Base.:<(x::Tx, y::Ty) where {Tx<:Semiring, Ty<:Semiring} =
-    Base.:<(IsOrdered(Tx, Ty), x, y)
-Base.:<(::Unordered, x::Semiring, y::Semiring) = _notdefinedfor(Unordered)
-Base.:<(::Ordered, x::Semiring, y::Semiring) = x.val < y.val
+    Base.:<(promote_type(IsOrdered(Tx), IsOrdered(Ty)), x, y)
+Base.:<(::Type{Unordered}, x::Semiring, y::Semiring) = _notdefinedfor(Unordered)
+Base.:<(::Type{Ordered}, x::Semiring, y::Semiring) = val(x) < val(y)
 

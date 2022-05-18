@@ -2,6 +2,19 @@ using Semirings
 import LogExpFunctions: logaddexp
 using Test
 
+@testset "Strings" begin
+    @test Semirings.longestcommonprefix("ab", "abc") == "ab"
+    @test Semirings.longestcommonprefix("abc", "ab") == "ab"
+    @test Semirings.longestcommonprefix("", "ab") == ""
+    @test Semirings.longestcommonprefix("ab", "") == ""
+    @test Semirings.longestcommonprefix("", "") == ""
+
+    @test "ab" * ∞ == ∞
+    @test ∞ * "ab" == ∞
+    @test Semirings.longestcommonprefix(∞, "ab") == "ab"
+    @test Semirings.longestcommonprefix("ab", ∞) == "ab"
+end
+
 @testset "Boolean semiring" begin
     x, y = one(BoolSemiring), zero(BoolSemiring)
     @test val(x) # one is true
@@ -93,7 +106,7 @@ end
 @testset "Semiring properties" begin
     # Unordered semirings
     for T in [BoolSemiring, UnionConcatSemiring]
-        @test IsOrdered(T) == Unordered()
+        @test IsOrdered(T) == Unordered
         @test_throws DomainError typemin(T)
         @test_throws DomainError typemin(one(T))
         @test_throws DomainError typemax(T)
@@ -103,30 +116,30 @@ end
 
     # Ordered semirings
     for T in [LogSemiring, ProbSemiring, TropicalSemiring]
-        @test IsOrdered(T) == Ordered()
+        @test IsOrdered(T) == Ordered
         @test one(T) > zero(T)
     end
 
     # Not divisible semirings
     for T in [BoolSemiring, UnionConcatSemiring]
-        @test IsDivisible(T) == NotDivisible()
+        @test IsDivisible(T) == NotDivisible
         @test_throws DomainError one(T) / one(T)
     end
 
     # Divisible semirings
     for T in [LogSemiring, ProbSemiring, TropicalSemiring]
-        @test IsDivisible(T) == Divisible()
+        @test IsDivisible(T) == Divisible
         @test one(T) ≈ (one(T) + one(T)) / (one(T) + one(T))
     end
 
     # Not idempotent semirings
     for T in [LogSemiring, ProbSemiring]
-        @test IsIdempotent(T) == NotIdempotent()
+        @test IsIdempotent(T) == NotIdempotent
     end
 
     # Idempotent semirings
     for T in [BoolSemiring, TropicalSemiring, UnionConcatSemiring]
-        @test IsIdempotent(T) == Idempotent()
+        @test IsIdempotent(T) == Idempotent
         @test one(T) + one(T) ≈ one(T)
     end
 end

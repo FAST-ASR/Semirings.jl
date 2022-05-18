@@ -1,6 +1,8 @@
 # Releases
 
-## 0.3.1
+## 0.4.0
+## Added
+- added the `StringSemiring`
 ### Fixed
 - Removed the `UnionAll` in the `show` method. This type signature was
   causing printing issue with the PythonCall package.

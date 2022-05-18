@@ -15,7 +15,7 @@ struct BoolSemiring <: Semiring
     val::Bool
 end
 
-IsIdempotent(::Type{<:BoolSemiring}) = Idempotent()
+IsIdempotent(::Type{<:BoolSemiring}) = Idempotent
 
 Base.:+(x::BoolSemiring, y::BoolSemiring) = BoolSemiring(x.val || y.val)
 Base.:*(x::BoolSemiring, y::BoolSemiring) = BoolSemiring(x.val && y.val)
@@ -43,8 +43,8 @@ Base.promote_rule(::Type{LogSemiring{Tx}}, ::Type{LogSemiring{Ty}}) where {Tx,Ty
 Base.float(::Type{LogSemiring{T}}) where T = LogSemiring{float(T)}
 Base.float(x::LogSemiring{T}) where T = LogSemiring(float(x.val))
 
-IsDivisible(::Type{<:LogSemiring}) = Divisible()
-IsOrdered(::Type{<:LogSemiring}) = Ordered()
+IsDivisible(::Type{<:LogSemiring}) = Divisible
+IsOrdered(::Type{<:LogSemiring}) = Ordered
 
 Base.:+(x::LogSemiring, y::LogSemiring) = LogSemiring(logaddexp(x.val, y.val))
 Base.:*(x::LogSemiring, y::LogSemiring) = LogSemiring(x.val + y.val)
@@ -79,8 +79,8 @@ Base.promote_rule(::Type{ProbSemiring{Tx}}, ::Type{ProbSemiring{Ty}}) where {Tx,
 Base.float(::Type{ProbSemiring{T}}) where T = ProbSemiring{float(T)}
 Base.float(x::ProbSemiring{T}) where T = ProbSemiring(float(x.val))
 
-IsDivisible(::Type{<:ProbSemiring}) = Divisible()
-IsOrdered(::Type{<:ProbSemiring}) = Ordered()
+IsDivisible(::Type{<:ProbSemiring}) = Divisible
+IsOrdered(::Type{<:ProbSemiring}) = Ordered
 
 Base.:+(x::ProbSemiring, y::ProbSemiring) = ProbSemiring(x.val + y.val)
 Base.:*(x::ProbSemiring, y::ProbSemiring) = ProbSemiring(x.val * y.val)
@@ -93,6 +93,43 @@ Base.:<(x::ProbSemiring, y::ProbSemiring) = x.val < y.val
 Base.typemin(x::Type{ProbSemiring{T}}) where T = zero(ProbSemiring{T})
 Base.typemax(x::Type{ProbSemiring{T}}) where T =
     ProbSemiring{T}(typemax(float(T)))
+
+"""
+    struct ProductSemiring{T1<:Semiring, T2<:Semiring} <: Semiring{T}
+        val1::T1
+        val2::T2
+    end
+
+Produc semiring ``R = R_1 \times R_2`` where ``\times`` is the
+Cartesian product.
+"""
+struct ProductSemiring{T1<:Semiring,T2<:Semiring} <: Semiring
+    val1::T1
+    val2::T2
+end
+
+Base.promote_rule(::Type{ProductSemiring{T1x, T2x}},
+                  ::Type{ProductSemiring{T1y,T2y}}) where {T1x,T2x,T1y,T2y} =
+    ProductSemiring{promote_type(T1x, T1y),promote_type(T2x,T2y)}
+Base.float(::Type{ProductSemiring{T1,T2}}) where {T1,T2} =
+    ProductSemiring{float(T1),float(T2)}
+Base.float(x::ProductSemiring) = ProductSemiring(float(x.val1), float(y.val2))
+
+#IsDivisible(::Type{<:ProductSemiring{T1,T2}}) where {T1,T2} =
+#    promote_type(T1, T2)
+#IsOrdered(::Type{<:ProbSemiring}) = Ordered
+
+#Base.:+(x::ProbSemiring, y::ProbSemiring) = ProbSemiring(x.val + y.val)
+#Base.:*(x::ProbSemiring, y::ProbSemiring) = ProbSemiring(x.val * y.val)
+#Base.:/(x::ProbSemiring, y::ProbSemiring) = ProbSemiring(x.val / y.val)
+#Base.zero(::Type{ProbSemiring}) = zero(ProbSemiring{Real})
+#Base.one(::Type{ProbSemiring}) = one(ProbSemiring{Real})
+#Base.zero(::Type{ProbSemiring{T}}) where T = ProbSemiring(zero(float(T)))
+#Base.one(::Type{ProbSemiring{T}}) where T = ProbSemiring(one(float(T)))
+#Base.:<(x::ProbSemiring, y::ProbSemiring) = x.val < y.val
+#Base.typemin(x::Type{ProbSemiring{T}}) where T = zero(ProbSemiring{T})
+#Base.typemax(x::Type{ProbSemiring{T}}) where T =
+#    ProbSemiring{T}(typemax(float(T)))
 
 #======================================================================
 Tropical semiring
@@ -114,9 +151,9 @@ Base.promote_rule(::Type{TropicalSemiring{Tx}}, ::Type{TropicalSemiring{Ty}}) wh
 Base.float(::Type{TropicalSemiring{T}}) where T = TropicalSemiring{float(T)}
 Base.float(x::TropicalSemiring{T}) where T = TropicalSemiring(float(x.val))
 
-IsDivisible(::Type{<:TropicalSemiring}) = Divisible()
-IsIdempotent(::Type{<:TropicalSemiring}) = Idempotent()
-IsOrdered(::Type{<:TropicalSemiring}) = Ordered()
+IsDivisible(::Type{<:TropicalSemiring}) = Divisible
+IsIdempotent(::Type{<:TropicalSemiring}) = Idempotent
+IsOrdered(::Type{<:TropicalSemiring}) = Ordered
 
 Base.:+(x::TropicalSemiring, y::TropicalSemiring) = TropicalSemiring(max(x.val, y.val))
 Base.:*(x::TropicalSemiring, y::TropicalSemiring) = TropicalSemiring(x.val + y.val)
@@ -130,6 +167,34 @@ Base.typemin(x::Type{TropicalSemiring{T}}) where T =
     TropicalSemiring{T}(typemin(float(T)))
 Base.typemax(x::Type{TropicalSemiring{T}}) where T =
     TropicalSemiring{T}(typemax(float(T)))
+
+#======================================================================
+String semiring
+======================================================================#
+
+"""
+    struct StringSemiring{T<:AbstractString} <: Semiring
+        val::T
+    end
+
+String semiring: ``R = (\\Sigma\\^*, \\land, \\cdot, \\infty, \\epsilon)``,
+where ``x \\land y`` is the longest common prefix between ``x`` and
+``y``, ``\\cdot`` is the string concatentation operation.
+"""
+struct StringSemiring{T<:AbstractString} <: Semiring
+    val::T
+end
+
+IsIdempotent(::Type{<:StringSemiring}) = Idempotent
+
+Base.zero(::Type{StringSemiring}) = StringSemiring(∞)
+Base.one(::Type{StringSemiring}) = StringSemiring("")
+Base.:+(x::StringSemiring, y::StringSemiring) =
+    StringSemiring(longestcommonprefix(val(x), val(y)))
+Base.:*(x::StringSemiring, y::StringSemiring) = StringSemiring(val(x) * val(y))
+Base.conj(x::StringSemiring) = x
+Base.:(==)(x::StringSemiring, y::StringSemiring) = val(x) == val(y)
+Base.:(≈)(x::StringSemiring, y::StringSemiring) = x == y
 
 #======================================================================
 Union-Concatenation semiring
@@ -154,7 +219,7 @@ struct UnionConcatSemiring <: Semiring
 end
 UnionConcatSemiring(x::SymbolSequence) = UnionConcatSemiring(Set([x]))
 
-IsIdempotent(::Type{<:UnionConcatSemiring}) = Idempotent()
+IsIdempotent(::Type{<:UnionConcatSemiring}) = Idempotent
 
 Base.:+(x::UnionConcatSemiring, y::UnionConcatSemiring) =
     UnionConcatSemiring(union(x.val, y.val))
@@ -180,7 +245,7 @@ global functions
 ======================================================================#
 
 for K in [:BoolSemiring, :UnionConcatSemiring]
-    eval(:( $K(x::Semiring) = $K(x.val) ))
+    eval(:( $K(x::Semiring) = $K(val(x)) ))
 end
 
 for K in [:UnionConcatSemiring]
