@@ -24,11 +24,11 @@ The zero element of the string semiring.
 struct StringZero <: AbstractString end
 const ∞ = StringZero()
 
-Base.ncodeunits(::StringZero) = 0
+Base.ncodeunits(::StringZero) = 3
 Base.codeunit(::StringZero) = UInt8
-Base.isvalid(::StringZero, ::Integer) = throw(BoundsError())
-Base.iterate(::StringZero) = nothing
-Base.iterate(::StringZero, ::Integer) = throw(BoundsError())
+Base.isvalid(::StringZero, i::Integer) = i == 1 ? true : false
+Base.iterate(::StringZero) = ("∞", 1)
+Base.iterate(::StringZero, ::Integer) = nothing
 Base.show(io::IO, x::StringZero) = print(io, "∞")
 Base.:*(x::StringZero, y::AbstractString) = x
 Base.:*(x::AbstractString, y::StringZero) = y

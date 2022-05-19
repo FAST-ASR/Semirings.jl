@@ -65,6 +65,31 @@ end
     end
 end
 
+@testset "Product semiring" begin
+    Ts = [BoolSemiring, LogSemiring, ProbSemiring,
+          StringSemiring, TropicalSemiring, UnionConcatSemiring]
+
+    for T1 in Ts, T2 in Ts
+        T = ProductSemiring{T1,T2}
+        x, y = zero(T), one(T)
+        z = y + y
+        @test x == ProductSemiring(zero(T1), zero(T2))
+        @test y == ProductSemiring(one(T1), one(T2))
+        @test z == ProductSemiring(one(T1) + one(T1), one(T2) + one(T2))
+        @test z * z == ProductSemiring(z.val1 * z.val1, z.val2 * z.val2)
+
+        if IsOrdered(T1) == Ordered && IsOrdered(T2) == Ordered
+            @test x < y <= z
+        else
+            @test_throws DomainError typemin(T)
+            @test_throws DomainError typemin(one(T))
+            @test_throws DomainError typemax(T)
+            @test_throws DomainError typemax(one(T))
+            @test_throws DomainError one(T) > one(T)
+        end
+    end
+end
+
 @testset "Tropical semiring" begin
     Ts = [Int64, Int32, Float64, Float32]
 
@@ -86,26 +111,23 @@ end
 
 @testset "Union-Concatenation semiring" begin
     @test issetequal(val(zero(UnionConcatSemiring)), Set())
-    @test issetequal(val(one(UnionConcatSemiring)), Set([SymbolSequence()]))
+    @test issetequal(val(one(UnionConcatSemiring)), Set([""]))
 
-    valx, valy = SymbolSequence([:a, :b]), SymbolSequence([:a, :b, :c])
-    @test UnionConcatSemiring(valx) == UnionConcatSemiring(Set([valx]))
-
-    x, y = UnionConcatSemiring(valx), UnionConcatSemiring(valy)
+    valx, valy = "ab", "abc"
+    x = UnionConcatSemiring(Set([valx]))
+    y = UnionConcatSemiring(Set([valy]))
+    z = UnionConcatSemiring(Set(["abab", "ababc"]))
     @test issetequal(val(x + y), union(Set([valx]), Set([valy])))
-
-    z = UnionConcatSemiring(Set([
-            SymbolSequence([:a, :b, :a, :b]),
-            SymbolSequence([:a, :b, :a, :b, :c])]))
-
     @test issetequal(val(x * (x + y)), val(z))
-
     @test conj(x + y) == (x + y)
 end
 
 @testset "Semiring properties" begin
+    Ts = [BoolSemiring, LogSemiring, ProbSemiring,
+          StringSemiring, TropicalSemiring, UnionConcatSemiring]
+
     # Unordered semirings
-    for T in [BoolSemiring, UnionConcatSemiring]
+    for T in filter(x -> IsOrdered(x) == Unordered, Ts)
         @test IsOrdered(T) == Unordered
         @test_throws DomainError typemin(T)
         @test_throws DomainError typemin(one(T))
@@ -115,38 +137,38 @@ end
     end
 
     # Ordered semirings
-    for T in [LogSemiring, ProbSemiring, TropicalSemiring]
+    for T in filter(x -> IsOrdered(x) == Ordered, Ts)
         @test IsOrdered(T) == Ordered
         @test one(T) > zero(T)
     end
 
     # Not divisible semirings
-    for T in [BoolSemiring, UnionConcatSemiring]
+    for T in filter(x -> IsDivisible == NotDivisible, Ts)
         @test IsDivisible(T) == NotDivisible
         @test_throws DomainError one(T) / one(T)
     end
 
     # Divisible semirings
-    for T in [LogSemiring, ProbSemiring, TropicalSemiring]
+    for T in filter(x -> IsDivisible == Divisible, Ts)
         @test IsDivisible(T) == Divisible
         @test one(T) ≈ (one(T) + one(T)) / (one(T) + one(T))
     end
 
     # Not idempotent semirings
-    for T in [LogSemiring, ProbSemiring]
+    for T in filter(x -> IsIdempotent == NotIdempotent, Ts)
         @test IsIdempotent(T) == NotIdempotent
     end
 
     # Idempotent semirings
-    for T in [BoolSemiring, TropicalSemiring, UnionConcatSemiring]
+    for T in filter(x -> IsIdempotent == Idempotent, Ts)
         @test IsIdempotent(T) == Idempotent
         @test one(T) + one(T) ≈ one(T)
     end
 end
 
 @testset "General methods" begin
-    Ts = [BoolSemiring, LogSemiring, ProbSemiring, TropicalSemiring,
-          UnionConcatSemiring]
+    Ts = [BoolSemiring, LogSemiring, ProbSemiring, StringSemiring,
+          TropicalSemiring, UnionConcatSemiring]
 
     for T in Ts
         x = ones(T, 10)

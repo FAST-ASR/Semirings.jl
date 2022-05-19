@@ -14,6 +14,7 @@ export Semiring
 export BoolSemiring
 export LogSemiring
 export ProbSemiring
+export ProductSemiring
 export StringSemiring
 export TropicalSemiring
 export UnionConcatSemiring, SymbolSequence
