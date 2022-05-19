@@ -2,6 +2,7 @@
 
 ## 0.4.0
 ## Added
+- added the `ProductSemiring`, i.e. the combination of two semirings
 - added the `StringSemiring`
 ## Changed
 - The Union-Concatenation semiring is now restricted to work on strings
