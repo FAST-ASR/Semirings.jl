@@ -1,6 +1,12 @@
 # Releases
 
-## 0.3.1
+## 0.4.0
+## Added
+- added the `ProductSemiring`, i.e. the combination of two semirings
+- added the `StringSemiring`
+## Changed
+- The Union-Concatenation semiring is now restricted to work on strings
+  and not arbitrary sequences
 ### Fixed
 - Removed the `UnionAll` in the `show` method. This type signature was
   causing printing issue with the PythonCall package.
@@ -11,7 +17,7 @@
 - `abs(x)` return `x` for semiring values
 
 ### Fixed
-- `K(true / false)` does not give the semiring 1 / 0.
+- `K(true / false)` does not give the semiring 1 / 0
 - `oneunit(x)` failing due to the impossibility to build
   a semiring number from another semiring number
 - `conj(x)` returning the identity function for the Union-Concatenation
