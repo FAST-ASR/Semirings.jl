@@ -1,6 +1,6 @@
 # Releases
 
-## 0.4.0
+## [0.4.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.4.0) - 2022.05.20
 ## Added
 - added the `ProductSemiring`, i.e. the combination of two semirings
 - added the `StringSemiring`
