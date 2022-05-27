@@ -112,27 +112,47 @@ end
 end
 
 @testset "Union-Concatenation semiring" begin
-    for T in [StringMonoid, SequenceMonoid]
+    for T in [ProbSemiring{Float32}, LogSemiring{Float32},
+              StringMonoid, SequenceMonoid]
         K = UnionConcatSemiring{T}
         @test issetequal(val(zero(K)), Set())
         @test issetequal(val(one(K)), Set(one(T)))
 
         if T == StringMonoid
             valx, valy = T("ab"), T("abc")
-        else
+        elseif T == SequenceMonoid
             valx, valy = T(tuple(:a, :b)), T(tuple(:a, :b, :c))
+        else
+            valx, valy = T(0.5), T(0.5)
         end
         x = K(Set([valx]))
         y = K(Set([valy]))
-        if T == StringMonoid
-            z = K(Set([T("abab"), T("ababc")]))
-        else
-            z = K(Set([T(tuple(:a, :b, :a, :b)),
-                       T(tuple(:a, :b, :a, :b, :c))]))
-        end
 
-        @test issetequal(val(x + y), union(Set([valx]), Set([valy])))
-        @test issetequal(val(x * (x + y)), val(z))
+        @test issetequal(val(x + y), union(val(x), val(y)))
+        @test issetequal(val(x * (x + y)), union(val(x * x), val(x * y)))
+        @test conj(x + y) == (x + y)
+    end
+end
+
+@testset "Append-Concatenation semiring" begin
+    for T in [ProbSemiring{Float32}, LogSemiring{Float32},
+              StringMonoid, SequenceMonoid]
+        K = AppendConcatSemiring{T}
+        @test issetequal(val(zero(K)), T[])
+        @test issetequal(val(one(K)), [one(T)])
+
+        if T == StringMonoid
+            valx, valy = T("ab"), T("abc")
+        elseif T == SequenceMonoid
+            valx, valy = T(tuple(:a, :b)), T(tuple(:a, :b, :c))
+        else
+            valx, valy = T(0.5), T(0.5)
+        end
+        x = K([valx])
+        y = K([valy])
+
+        @test all(val(x + y) .≈ vcat(val(x), val(y)))
+        @test all(val(x * (x + y)) .≈ vcat(val(x * x), val(x * y)))
         @test conj(x + y) == (x + y)
     end
 end
@@ -186,7 +206,11 @@ end
 @testset "General methods" begin
     Ts = [BoolSemiring, LogSemiring, ProbSemiring, StringSemiring,
           TropicalSemiring, UnionConcatSemiring{StringMonoid},
-          UnionConcatSemiring{SequenceMonoid}]
+          UnionConcatSemiring{SequenceMonoid},
+          UnionConcatSemiring{ProbSemiring{Float32}},
+          AppendConcatSemiring{StringMonoid},
+          AppendConcatSemiring{SequenceMonoid},
+          AppendConcatSemiring{ProbSemiring{Float32}}]
 
     for T in Ts
         x = ones(T, 10)

@@ -17,6 +17,7 @@ end
 
 Base.:*(x::StringMonoid, y::StringMonoid) = StringMonoid(x.val * y.val)
 Base.one(::Type{StringMonoid}) = StringMonoid("")
+Base.:(≈)(x::StringMonoid, y::StringMonoid) = val(x) == val(y)
 
 #======================================================================
 Sequence monoid
@@ -36,6 +37,5 @@ end
 Base.:*(x::SequenceMonoid, y::SequenceMonoid) =
     SequenceMonoid(tuple(val(x)..., val(y)...))
 Base.one(::Type{SequenceMonoid}) = SequenceMonoid(tuple())
-Base.:(==)(x::SequenceMonoid, y::SequenceMonoid) = val(x) == val(y)
 Base.:(≈)(x::SequenceMonoid, y::SequenceMonoid) = val(x) == val(y)
 

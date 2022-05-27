@@ -15,6 +15,7 @@ export SequenceMonoid
 
 # Semirings
 export Semiring
+export AppendConcatSemiring
 export BoolSemiring
 export LogSemiring
 export ProbSemiring

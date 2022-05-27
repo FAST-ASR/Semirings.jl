@@ -211,14 +211,14 @@ Union-Concatenation semiring
 ======================================================================#
 
 """
-    struct UnionConcatSemiring{T<:Monoid} <: Semiring
+    struct UnionConcatSemiring{T<:Union{Monoid,Semiring}} <: Semiring
         val::Set{T}
     end
 
 Union-Concatenation semiring: ``R = (\\Sigma\\^*, \\cup, \\cdot,
 \\{\\}, \\{\\epsilon\\})`` over set of symbol sequence.
 """
-struct UnionConcatSemiring{T<:Monoid} <: Semiring
+struct UnionConcatSemiring{T<:Union{Monoid,Semiring}} <: Semiring
     val::Set{T}
 end
 
@@ -246,6 +246,45 @@ Base.:(==)(x::UnionConcatSemiring, y::UnionConcatSemiring) = issetequal(x.val, y
 Base.:(≈)(x::UnionConcatSemiring, y::UnionConcatSemiring) = x == y
 
 #======================================================================
+Append-Concatenation semiring
+======================================================================#
+
+"""
+    struct AppendConcatSemiring{T<:Union{Monoid,Semiring}} <: Semiring
+        val::Set{T}
+    end
+
+Append-Concatenation semiring: ``R = (\\Sigma\\^*, [x, y], \\cdot,
+\\{\\}, \\{\\epsilon\\})`` over set of symbol sequence.
+"""
+struct AppendConcatSemiring{T<:Union{Monoid,Semiring}} <: Semiring
+    val::Array{T}
+end
+
+Base.:+(x::AppendConcatSemiring, y::AppendConcatSemiring) =
+    AppendConcatSemiring(union(val(x), val(y)))
+
+function Base.:*(x::AppendConcatSemiring{T}, y::AppendConcatSemiring{T}) where T
+    newseqs = T[]
+    for xᵢ in val(x)
+        for yᵢ in val(y)
+            push!(newseqs, xᵢ * yᵢ)
+        end
+    end
+    AppendConcatSemiring{T}(newseqs)
+end
+
+Base.zero(::Type{AppendConcatSemiring{T}}) where T =
+    AppendConcatSemiring{T}(T[])
+Base.one(::Type{AppendConcatSemiring{T}}) where T=
+    AppendConcatSemiring{T}([one(T)])
+Base.conj(x::AppendConcatSemiring) = x
+Base.:(==)(x::AppendConcatSemiring, y::AppendConcatSemiring) =
+    length(x.val) == length(y.val) && all(x.val .== y.val)
+Base.:(≈)(x::AppendConcatSemiring, y::AppendConcatSemiring) =
+    length(x.val) == length(y.val) && all(x.val .≈ y.val)
+
+#======================================================================
 global functions
 ======================================================================#
 
@@ -262,7 +301,7 @@ for K in [:LogSemiring, :ProbSemiring, :TropicalSemiring]
     eval(:( $K{T}(x::Bool) where T <: Real = x ? one($K{T}) : zero($K{T}) ))
 end
 
-for K in [:UnionConcatSemiring]
-    eval(:( $K{T}(x::Semiring) where T <: Monoid = $K{T}(x.val) ))
-    eval(:( $K{T}(x::Bool) where T <: Monoid = x ? one($K{T}) : zero($K{T}) ))
+for K in [:UnionConcatSemiring, :AppendConcatSemiring]
+    eval(:( $K{T}(x::Semiring) where T <: Union{Monoid,Semiring} = $K{T}(x.val) ))
+    eval(:( $K{T}(x::Bool) where T <: Union{Monoid,Semiring} = x ? one($K{T}) : zero($K{T}) ))
 end
