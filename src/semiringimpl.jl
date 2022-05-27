@@ -130,6 +130,7 @@ Base.zero(::Type{ProductSemiring{T1,T2}}) where {T1,T2} =
     ProductSemiring(zero(T1), zero(T2))
 Base.one(::Type{ProductSemiring{T1,T2}}) where {T1,T2} =
     ProductSemiring(one(T1), one(T2))
+Base.conj(x::ProductSemiring) = ProductSemiring(conj(x.val1), conj(x.val2))
 Base.:(==)(x::ProductSemiring, y::ProductSemiring) =
     x.val1 == y.val1 && x.val2 == y.val2
 Base.:(≈)(x::ProductSemiring, y::ProductSemiring) =
