@@ -9,6 +9,10 @@ import LogExpFunctions: logaddexp
 export StringZero
 export ∞
 
+# Monoids
+export StringMonoid
+export SequenceMonoid
+
 # Semirings
 export Semiring
 export BoolSemiring
@@ -26,6 +30,8 @@ export IsDivisible, Divisible, NotDivisible
 export IsIdempotent, Idempotent, NotIdempotent
 export IsOrdered, Ordered, Unordered
 
+include("monoidtype.jl")
+include("monoidimpl.jl")
 include("semiringtype.jl")
 include("properties.jl")
 include("semiringimpl.jl")

@@ -67,7 +67,8 @@ end
 
 @testset "Product semiring" begin
     Ts = [BoolSemiring, LogSemiring, ProbSemiring,
-          StringSemiring, TropicalSemiring, UnionConcatSemiring]
+          StringSemiring, TropicalSemiring, UnionConcatSemiring{StringMonoid},
+          UnionConcatSemiring{SequenceMonoid}]
 
     for T1 in Ts, T2 in Ts
         T = ProductSemiring{T1,T2}
@@ -110,21 +111,36 @@ end
 end
 
 @testset "Union-Concatenation semiring" begin
-    @test issetequal(val(zero(UnionConcatSemiring)), Set())
-    @test issetequal(val(one(UnionConcatSemiring)), Set([""]))
+    for T in [StringMonoid, SequenceMonoid]
+        K = UnionConcatSemiring{T}
+        @test issetequal(val(zero(K)), Set())
+        @test issetequal(val(one(K)), Set(one(T)))
 
-    valx, valy = "ab", "abc"
-    x = UnionConcatSemiring(Set([valx]))
-    y = UnionConcatSemiring(Set([valy]))
-    z = UnionConcatSemiring(Set(["abab", "ababc"]))
-    @test issetequal(val(x + y), union(Set([valx]), Set([valy])))
-    @test issetequal(val(x * (x + y)), val(z))
-    @test conj(x + y) == (x + y)
+        if T == StringMonoid
+            valx, valy = T("ab"), T("abc")
+        else
+            valx, valy = T(tuple(:a, :b)), T(tuple(:a, :b, :c))
+        end
+        x = K(Set([valx]))
+        y = K(Set([valy]))
+        if T == StringMonoid
+            z = K(Set([T("abab"), T("ababc")]))
+        else
+            z = K(Set([T(tuple(:a, :b, :a, :b)),
+                       T(tuple(:a, :b, :a, :b, :c))]))
+        end
+
+        @test issetequal(val(x + y), union(Set([valx]), Set([valy])))
+        @test issetequal(val(x * (x + y)), val(z))
+        @test conj(x + y) == (x + y)
+    end
 end
 
 @testset "Semiring properties" begin
     Ts = [BoolSemiring, LogSemiring, ProbSemiring,
-          StringSemiring, TropicalSemiring, UnionConcatSemiring]
+          StringSemiring, TropicalSemiring,
+          UnionConcatSemiring{StringMonoid},
+          UnionConcatSemiring{SequenceMonoid}]
 
     # Unordered semirings
     for T in filter(x -> IsOrdered(x) == Unordered, Ts)
@@ -168,7 +184,8 @@ end
 
 @testset "General methods" begin
     Ts = [BoolSemiring, LogSemiring, ProbSemiring, StringSemiring,
-          TropicalSemiring, UnionConcatSemiring]
+          TropicalSemiring, UnionConcatSemiring{StringMonoid},
+          UnionConcatSemiring{SequenceMonoid}]
 
     for T in Ts
         x = ones(T, 10)

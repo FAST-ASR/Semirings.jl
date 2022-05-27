@@ -130,6 +130,10 @@ Base.zero(::Type{ProductSemiring{T1,T2}}) where {T1,T2} =
     ProductSemiring(zero(T1), zero(T2))
 Base.one(::Type{ProductSemiring{T1,T2}}) where {T1,T2} =
     ProductSemiring(one(T1), one(T2))
+Base.:(==)(x::ProductSemiring, y::ProductSemiring) =
+    x.val1 == y.val1 && x.val2 == y.val2
+Base.:(≈)(x::ProductSemiring, y::ProductSemiring) =
+    x.val1 ≈ y.val1 && x.val2 ≈ y.val2
 Base.:<(::Type{Ordered}, x::ProductSemiring, y::ProductSemiring) =
     ! isequal(x.val1, y.val1) ? x.val1 < y.val1 : x.val2 < y.val2
 Base.typemin(::Type{Ordered}, ::Type{ProductSemiring{T1,T2}}) where {T1,T2} =
@@ -206,15 +210,15 @@ Union-Concatenation semiring
 ======================================================================#
 
 """
-    struct UnionConcatSemiring <: Semiring
-        val::Set{AbstractString}
+    struct UnionConcatSemiring{T<:Monoid} <: Semiring
+        val::Set{T}
     end
 
 Union-Concatenation semiring: ``R = (\\Sigma\\^*, \\cup, \\cdot,
 \\{\\}, \\{\\epsilon\\})`` over set of symbol sequence.
 """
-struct UnionConcatSemiring <: Semiring
-    val::Set{AbstractString}
+struct UnionConcatSemiring{T<:Monoid} <: Semiring
+    val::Set{T}
 end
 
 IsIdempotent(::Type{<:UnionConcatSemiring}) = Idempotent
@@ -222,18 +226,20 @@ IsIdempotent(::Type{<:UnionConcatSemiring}) = Idempotent
 Base.:+(x::UnionConcatSemiring, y::UnionConcatSemiring) =
     UnionConcatSemiring(union(val(x), val(y)))
 
-function Base.:*(x::UnionConcatSemiring, y::UnionConcatSemiring)
-    newseqs = Set{AbstractString}()
+function Base.:*(x::UnionConcatSemiring{T}, y::UnionConcatSemiring{T}) where T
+    newseqs = Set{}()
     for xᵢ in val(x)
         for yᵢ in val(y)
             push!(newseqs, xᵢ * yᵢ)
         end
     end
-    UnionConcatSemiring(newseqs)
+    UnionConcatSemiring{T}(newseqs)
 end
 
-Base.zero(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set{AbstractString}())
-Base.one(::Type{UnionConcatSemiring}) = UnionConcatSemiring(Set{AbstractString}([""]))
+Base.zero(::Type{UnionConcatSemiring{T}}) where T =
+    UnionConcatSemiring{T}(Set{T}())
+Base.one(::Type{UnionConcatSemiring{T}}) where T=
+    UnionConcatSemiring{T}(Set{T}(one(T)))
 Base.conj(x::UnionConcatSemiring) = x
 Base.:(==)(x::UnionConcatSemiring, y::UnionConcatSemiring) = issetequal(x.val, y.val)
 Base.:(≈)(x::UnionConcatSemiring, y::UnionConcatSemiring) = x == y
@@ -242,15 +248,20 @@ Base.:(≈)(x::UnionConcatSemiring, y::UnionConcatSemiring) = x == y
 global functions
 ======================================================================#
 
-for K in [:BoolSemiring, :StringSemiring, :UnionConcatSemiring]
+for K in [:BoolSemiring, :StringSemiring]
     eval(:( $K(x::Semiring) = $K(val(x)) ))
 end
 
-for K in [:StringSemiring, :UnionConcatSemiring]
+for K in [:StringSemiring]
     eval(:( $K(x::Bool) = x ? one($K) : zero($K) ))
 end
 
 for K in [:LogSemiring, :ProbSemiring, :TropicalSemiring]
     eval(:( $K{T}(x::Semiring) where T <: Real = $K{T}(x.val) ))
     eval(:( $K{T}(x::Bool) where T <: Real = x ? one($K{T}) : zero($K{T}) ))
+end
+
+for K in [:UnionConcatSemiring]
+    eval(:( $K{T}(x::Semiring) where T <: Monoid = $K{T}(x.val) ))
+    eval(:( $K{T}(x::Bool) where T <: Monoid = x ? one($K{T}) : zero($K{T}) ))
 end
