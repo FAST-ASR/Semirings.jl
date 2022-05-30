@@ -106,7 +106,7 @@ struct ProductSemiring{T1<:Semiring,T2<:Semiring} <: Semiring
     val2::T2
 end
 
-val(x::ProductSemiring) = (val(x.val1), val(x.val2))
+val(x::ProductSemiring) = (x.val1, x.val2)
 
 Base.promote_rule(::Type{ProductSemiring{T1x, T2x}},
                   ::Type{ProductSemiring{T1y,T2y}}) where {T1x,T2x,T1y,T2y} =

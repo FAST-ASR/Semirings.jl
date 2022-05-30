@@ -95,6 +95,7 @@ end
         @test z == ProductSemiring(one(T1) + one(T1), one(T2) + one(T2))
         @test z * z == ProductSemiring(z.val1 * z.val1, z.val2 * z.val2)
         @test conj(z) == z
+        @test val(y) == (one(T1), one(T2))
 
         if IsOrdered(T1) == Ordered && IsOrdered(T2) == Ordered
             @test x < y <= z
