@@ -15,6 +15,22 @@ using Test
     @test Semirings.longestcommonprefix("ab", ∞) == "ab"
 end
 
+@testset "Sequence monoid" begin
+    x = one(SequenceMonoid)
+    @test val(x) == tuple()
+
+    a, b = SequenceMonoid(tuple(1)), SequenceMonoid(tuple("a"))
+    @test val(a * b) == tuple(1, "a")
+end
+
+@testset "String monoid" begin
+    x = one(StringMonoid)
+    @test val(x) == ""
+
+    a, b = StringMonoid("a"), StringMonoid("b")
+    @test val(a * b) == "ab"
+end
+
 @testset "Boolean semiring" begin
     x, y = one(BoolSemiring), zero(BoolSemiring)
     @test val(x) # one is true

@@ -31,7 +31,7 @@ Sequence monoid
 String monoid: ``R = (\\Sigma\\^*, concat, \\epsilon)``.
 """
 struct SequenceMonoid <: Monoid
-    val::NTuple
+    val::Tuple
 end
 
 Base.:*(x::SequenceMonoid, y::SequenceMonoid) =
