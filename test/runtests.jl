@@ -15,6 +15,22 @@ using Test
     @test Semirings.longestcommonprefix("ab", ∞) == "ab"
 end
 
+@testset "Sequence monoid" begin
+    x = one(SequenceMonoid)
+    @test val(x) == tuple()
+
+    a, b = SequenceMonoid(tuple(1)), SequenceMonoid(tuple("a"))
+    @test val(a * b) == tuple(1, "a")
+end
+
+@testset "String monoid" begin
+    x = one(StringMonoid)
+    @test val(x) == ""
+
+    a, b = StringMonoid("a"), StringMonoid("b")
+    @test val(a * b) == "ab"
+end
+
 @testset "Boolean semiring" begin
     x, y = one(BoolSemiring), zero(BoolSemiring)
     @test val(x) # one is true
@@ -67,7 +83,8 @@ end
 
 @testset "Product semiring" begin
     Ts = [BoolSemiring, LogSemiring, ProbSemiring,
-          StringSemiring, TropicalSemiring, UnionConcatSemiring]
+          StringSemiring, TropicalSemiring, UnionConcatSemiring{StringMonoid},
+          UnionConcatSemiring{SequenceMonoid}]
 
     for T1 in Ts, T2 in Ts
         T = ProductSemiring{T1,T2}
@@ -77,6 +94,8 @@ end
         @test y == ProductSemiring(one(T1), one(T2))
         @test z == ProductSemiring(one(T1) + one(T1), one(T2) + one(T2))
         @test z * z == ProductSemiring(z.val1 * z.val1, z.val2 * z.val2)
+        @test conj(z) == z
+        @test val(y) == (one(T1), one(T2))
 
         if IsOrdered(T1) == Ordered && IsOrdered(T2) == Ordered
             @test x < y <= z
@@ -110,21 +129,56 @@ end
 end
 
 @testset "Union-Concatenation semiring" begin
-    @test issetequal(val(zero(UnionConcatSemiring)), Set())
-    @test issetequal(val(one(UnionConcatSemiring)), Set([""]))
+    for T in [ProbSemiring{Float32}, LogSemiring{Float32},
+              StringMonoid, SequenceMonoid]
+        K = UnionConcatSemiring{T}
+        @test issetequal(val(zero(K)), Set())
+        @test issetequal(val(one(K)), Set(one(T)))
 
-    valx, valy = "ab", "abc"
-    x = UnionConcatSemiring(Set([valx]))
-    y = UnionConcatSemiring(Set([valy]))
-    z = UnionConcatSemiring(Set(["abab", "ababc"]))
-    @test issetequal(val(x + y), union(Set([valx]), Set([valy])))
-    @test issetequal(val(x * (x + y)), val(z))
-    @test conj(x + y) == (x + y)
+        if T == StringMonoid
+            valx, valy = T("ab"), T("abc")
+        elseif T == SequenceMonoid
+            valx, valy = T(tuple(:a, :b)), T(tuple(:a, :b, :c))
+        else
+            valx, valy = T(0.5), T(0.5)
+        end
+        x = K(Set([valx]))
+        y = K(Set([valy]))
+
+        @test issetequal(val(x + y), union(val(x), val(y)))
+        @test issetequal(val(x * (x + y)), union(val(x * x), val(x * y)))
+        @test conj(x + y) == (x + y)
+    end
+end
+
+@testset "Append-Concatenation semiring" begin
+    for T in [ProbSemiring{Float32}, LogSemiring{Float32},
+              StringMonoid, SequenceMonoid]
+        K = AppendConcatSemiring{T}
+        @test issetequal(val(zero(K)), T[])
+        @test issetequal(val(one(K)), [one(T)])
+
+        if T == StringMonoid
+            valx, valy = T("ab"), T("abc")
+        elseif T == SequenceMonoid
+            valx, valy = T(tuple(:a, :b)), T(tuple(:a, :b, :c))
+        else
+            valx, valy = T(0.5), T(0.5)
+        end
+        x = K([valx])
+        y = K([valy])
+
+        @test all(val(x + y) .≈ vcat(val(x), val(y)))
+        @test all(val(x * (x + y)) .≈ vcat(val(x * x), val(x * y)))
+        @test conj(x + y) == (x + y)
+    end
 end
 
 @testset "Semiring properties" begin
     Ts = [BoolSemiring, LogSemiring, ProbSemiring,
-          StringSemiring, TropicalSemiring, UnionConcatSemiring]
+          StringSemiring, TropicalSemiring,
+          UnionConcatSemiring{StringMonoid},
+          UnionConcatSemiring{SequenceMonoid}]
 
     # Unordered semirings
     for T in filter(x -> IsOrdered(x) == Unordered, Ts)
@@ -168,7 +222,12 @@ end
 
 @testset "General methods" begin
     Ts = [BoolSemiring, LogSemiring, ProbSemiring, StringSemiring,
-          TropicalSemiring, UnionConcatSemiring]
+          TropicalSemiring, UnionConcatSemiring{StringMonoid},
+          UnionConcatSemiring{SequenceMonoid},
+          UnionConcatSemiring{ProbSemiring{Float32}},
+          AppendConcatSemiring{StringMonoid},
+          AppendConcatSemiring{SequenceMonoid},
+          AppendConcatSemiring{ProbSemiring{Float32}}]
 
     for T in Ts
         x = ones(T, 10)
