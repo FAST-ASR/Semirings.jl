@@ -1,10 +1,18 @@
 # Releases
 
-## 0.4.0
-## Added
+## 0.5.0
+### Added
+- append-concatenation semiring (`AppendConcat`), similar to
+  union-concatenation but with list concatentation instead of union
+  of set
+- monoid types: `StringMonoid` and `SequenceMonoid` that are used to
+  specialize `UnionConcat` and `AppendConcat` semiring
+
+## [0.4.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.4.0) - 2022.05.20
+### Added
 - added the `ProductSemiring`, i.e. the combination of two semirings
 - added the `StringSemiring`
-## Changed
+### Changed
 - The Union-Concatenation semiring is now restricted to work on strings
   and not arbitrary sequences
 ### Fixed
