@@ -1,14 +1,14 @@
 # Releases
 
-## 0.5.0
+## [0.5.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.0) - 01.06.2022
 ### Added
 - append-concatenation semiring (`AppendConcat`), similar to
   union-concatenation but with list concatentation instead of union
   of set
 - monoid types: `StringMonoid` and `SequenceMonoid` that are used to
-  specialize `UnionConcat` and `AppendConcat` semiring
+  specialize `UnionConcat` and `AppendConcat` semirings
 
-## [0.4.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.4.0) - 2022.05.20
+## [0.4.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.4.0) - 20.05.2022
 ### Added
 - added the `ProductSemiring`, i.e. the combination of two semirings
 - added the `StringSemiring`
@@ -19,7 +19,7 @@
 - Removed the `UnionAll` in the `show` method. This type signature was
   causing printing issue with the PythonCall package.
 
-## [0.3.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.3.0) - 2022.05.04
+## [0.3.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.3.0) - 04.05.2022
 ### Added
 - `val(x)` function to access the value of the semiring number
 - `abs(x)` return `x` for semiring values
@@ -31,13 +31,13 @@
 - `conj(x)` returning the identity function for the Union-Concatenation
   semiring.
 
-## [0.2.1](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.2.1) - 2022.04.25
+## [0.2.1](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.2.1) - 25.04.2022
 ### Fixed
 - `iszero(x)` not returning the semiring zero
 
-## [0.2.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.2.0) - 2022.04.23
+## [0.2.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.2.0) - 23.04.2022
 ### Changed
 - rename the package from `SemifieldAlgebra` to `Semirings`
 
-## [0.1.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.1.0) - 2021.04.04
+## [0.1.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.1.0) - 04.04.2021
 - initial release
