@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: MIT
 
+const SemiringOrMonoid = Union{Semiring,Monoid}
+
 function _notdefinedfor(prop)
     # Get the before the last function name in the stacktrace.
     fn = stacktrace(backtrace())[2].func
@@ -59,16 +61,20 @@ Base.convert(::Type{Ordered}, ::Unordered) = Unordered
 Base.promote_rule(::Type{Ordered}, ::Type{Unordered}) = Unordered
 IsOrdered(::Type) = Unordered
 
-Base.typemin(T::Type{<:Semiring}) = Base.typemin(IsOrdered(T), T)
-Base.typemin(x::Semiring) = Base.typemin(IsOrdered(typeof(x)), typeof(x))
-Base.typemin(::Type{Unordered}, ::Type{<:Semiring}) = _notdefinedfor(Unordered)
+Base.typemin(T::Type{<:SemiringOrMonoid}) = Base.typemin(IsOrdered(T), T)
+Base.typemin(x::SemiringOrMonoid) = Base.typemin(IsOrdered(typeof(x)), typeof(x))
+Base.typemin(::Type{Unordered}, ::Type{<:SemiringOrMonoid}) =
+    _notdefinedfor(Unordered)
 
-Base.typemax(T::Type{<:Semiring}) = Base.typemax(IsOrdered(T), T)
-Base.typemax(x::Semiring) = Base.typemax(IsOrdered(typeof(x)), typeof(x))
-Base.typemax(::Type{Unordered}, ::Type{<:Semiring}) = _notdefinedfor(Unordered)
+Base.typemax(T::Type{<:SemiringOrMonoid}) = Base.typemax(IsOrdered(T), T)
+Base.typemax(x::SemiringOrMonoid) = Base.typemax(IsOrdered(typeof(x)), typeof(x))
+Base.typemax(::Type{Unordered}, ::Type{<:SemiringOrMonoid}) =
+    _notdefinedfor(Unordered)
 
-Base.:<(x::Tx, y::Ty) where {Tx<:Semiring, Ty<:Semiring} =
+Base.:<(x::Tx, y::Ty) where {Tx<:SemiringOrMonoid, Ty<:SemiringOrMonoid} =
     Base.:<(promote_type(IsOrdered(Tx), IsOrdered(Ty)), x, y)
-Base.:<(::Type{Unordered}, x::Semiring, y::Semiring) = _notdefinedfor(Unordered)
-Base.:<(::Type{Ordered}, x::Semiring, y::Semiring) = val(x) < val(y)
+Base.:<(::Type{Unordered}, x::SemiringOrMonoid, y::SemiringOrMonoid) =
+    _notdefinedfor(Unordered)
+Base.:<(::Type{Ordered}, x::SemiringOrMonoid, y::SemiringOrMonoid) =
+    val(x) < val(y)
 

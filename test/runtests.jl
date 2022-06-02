@@ -21,6 +21,8 @@ end
 
     a, b = SequenceMonoid(tuple(1)), SequenceMonoid(tuple("a"))
     @test val(a * b) == tuple(1, "a")
+
+    @test SequenceMonoid(tuple("a", "c")) < SequenceMonoid(tuple("b", "b"))
 end
 
 @testset "String monoid" begin
@@ -29,6 +31,8 @@ end
 
     a, b = StringMonoid("a"), StringMonoid("b")
     @test val(a * b) == "ab"
+
+    @test StringMonoid("ac") < StringMonoid("bb")
 end
 
 @testset "Boolean semiring" begin

@@ -15,6 +15,8 @@ struct StringMonoid <: Monoid
     val::AbstractString
 end
 
+IsOrdered(::Type{<:StringMonoid}) = Ordered
+
 Base.:*(x::StringMonoid, y::StringMonoid) = StringMonoid(x.val * y.val)
 Base.one(::Type{StringMonoid}) = StringMonoid("")
 Base.:(≈)(x::StringMonoid, y::StringMonoid) = val(x) == val(y)
@@ -33,6 +35,8 @@ String monoid: ``R = (\\Sigma\\^*, concat, \\epsilon)``.
 struct SequenceMonoid <: Monoid
     val::Tuple
 end
+
+IsOrdered(::Type{<:SequenceMonoid}) = Ordered
 
 Base.:*(x::SequenceMonoid, y::SequenceMonoid) =
     SequenceMonoid(tuple(val(x)..., val(y)...))

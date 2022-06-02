@@ -32,9 +32,9 @@ export IsIdempotent, Idempotent, NotIdempotent
 export IsOrdered, Ordered, Unordered
 
 include("monoidtype.jl")
-include("monoidimpl.jl")
 include("semiringtype.jl")
 include("properties.jl")
+include("monoidimpl.jl")
 include("semiringimpl.jl")
 include("strings.jl")
 
