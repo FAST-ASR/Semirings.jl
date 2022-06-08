@@ -67,8 +67,8 @@ Base.typemax(T::Type{<:Semiring}) = Base.typemax(IsOrdered(T), T)
 Base.typemax(x::Semiring) = Base.typemax(IsOrdered(typeof(x)), typeof(x))
 Base.typemax(::Type{Unordered}, ::Type{<:Semiring}) = _notdefinedfor(Unordered)
 
-Base.:<(x::Tx, y::Ty) where {Tx<:Semiring, Ty<:Semiring} =
-    Base.:<(promote_type(IsOrdered(Tx), IsOrdered(Ty)), x, y)
-Base.:<(::Type{Unordered}, x::Semiring, y::Semiring) = _notdefinedfor(Unordered)
-Base.:<(::Type{Ordered}, x::Semiring, y::Semiring) = val(x) < val(y)
+Base.isless(x::Tx, y::Ty) where {Tx<:Semiring, Ty<:Semiring} =
+    Base.isless(promote_type(IsOrdered(Tx), IsOrdered(Ty)), x, y)
+Base.isless(::Type{Unordered}, x::Semiring, y::Semiring) = _notdefinedfor(Unordered)
+Base.isless(::Type{Ordered}, x::Semiring, y::Semiring) = val(x) < val(y)
 

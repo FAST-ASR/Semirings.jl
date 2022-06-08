@@ -194,6 +194,7 @@ end
     for T in filter(x -> IsOrdered(x) == Ordered, Ts)
         @test IsOrdered(T) == Ordered
         @test one(T) > zero(T)
+        @test maximum([T(2), T(3)]) == T(3)
     end
 
     # Not divisible semirings
