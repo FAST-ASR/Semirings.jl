@@ -1,11 +1,11 @@
 name = "Semirings"
 uuid = "900aad66-9ca5-44d4-b043-321c62cb7767"
-authors = ["Lucas Ondel <lucas.ondel@gmail.com>"]
-version = "0.5.0"
+authors = ["Lucas Ondel <lucas.ondel@gmail.com>", "Martin Kocour <ikocour@fit.vut.cz>"]
+version = "0.5.1"
 
 [deps]
 LogExpFunctions = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
 
 [compat]
-julia = "1.7"
 LogExpFunctions = "0.3"
+julia = "1.6"

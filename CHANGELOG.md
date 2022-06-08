@@ -1,5 +1,9 @@
 # Releases
 
+## [0.5.1](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.1) - 08.06.2022
+### Added
+- compatibility with Julia 1.6
+
 ## [0.5.0](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.0) - 01.06.2022
 ### Added
 - append-concatenation semiring (`AppendConcat`), similar to
