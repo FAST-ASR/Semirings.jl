@@ -1,5 +1,9 @@
 # Releases
 
+## [0.5.2](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.1) - 08.06.2022
+### Fixed
+- `isless(x, y)` not defined for `Ordered` semirings (e.g. LogSemiring, TropicalSemiring,...)
+
 ## [0.5.1](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.1) - 08.06.2022
 ### Added
 - compatibility with Julia 1.6
