@@ -19,3 +19,6 @@ Base.zero(x::Semiring) = zero(typeof(x))
 Base.one(x::Semiring) = one(typeof(x))
 Base.show(io::IO, x::Semiring) = print(io, typeof(x), "(", val(x),  ")")
 Base.show(io::IO, m::MIME"text/plain", x::Semiring) = print(io, val(x))
+
+# To allow conversion of a Semiring to a "classical" number.
+(t::Type{<:Number})(x::K) where K<:Semiring = t(val(x))
