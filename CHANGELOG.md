@@ -1,5 +1,9 @@
 # Releases
 
+## [0.5.3](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.4) - 26.07.2022
+### Fixed
+- `hash` not defined for `Semiring` nor for `Monoid` leading to a seach issues.
+
 ## [0.5.3](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.3) - 08.06.2022
 ### Fixed
 - `convert(., .)` works in both direction from/to semiring/number for
