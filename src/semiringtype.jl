@@ -15,6 +15,7 @@ Base.abs(x::Semiring) = x
 Base.promote_rule(x::Type{Semiring}, y::Type{Number}) = x
 Base.:(==)(x::Semiring, y::Semiring) = val(x) == val(y)
 Base.:(≈)(x::Semiring, y::Semiring) = val(x) ≈ val(y)
+Base.hash(x::Semiring, h::UInt) = hash(val(x), h)
 Base.zero(x::Semiring) = zero(typeof(x))
 Base.one(x::Semiring) = one(typeof(x))
 Base.show(io::IO, x::Semiring) = print(io, typeof(x), "(", val(x),  ")")
