@@ -12,6 +12,7 @@ val(x::Monoid) = x.val
 Base.promote_rule(x::Type{Monoid}, y::Type{Number}) = x
 Base.:(==)(x::Monoid, y::Monoid) = val(x) == val(y)
 Base.:(≈)(x::Monoid, y::Monoid) = val(x) ≈ val(y)
+Base.hash(x::Monoid, h::UInt) = hash(val(x), h)
 Base.one(x::Monoid) = one(typeof(x))
 Base.show(io::IO, x::Monoid) = print(io, typeof(x), "(", val(x),  ")")
 Base.show(io::IO, m::MIME"text/plain", x::Monoid) = print(io, val(x))
