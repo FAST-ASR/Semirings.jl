@@ -239,6 +239,17 @@ end
         @test all(x .≈ (x')')
     end
 
+    pTs = [BoolSemiring,
+           [K{T} for K in [LogSemiring, ProbSemiring, TropicalSemiring],
+                     T in [Float32, Float64]]...]
+    for T in pTs
+        x = one(T)
+        Tv = typeof(val(x))
+        @test convert(Tv, x) isa Tv
+        @test convert(T, (convert(Tv, x))) isa T
+        @test convert(T, (convert(Tv, x))) == x
+    end
+
     for T in Ts
         x, y = zero(T), one(T)
         @test zero(T) == zero(x)

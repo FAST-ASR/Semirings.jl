@@ -1,6 +1,11 @@
 # Releases
 
-## [0.5.2](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.1) - 08.06.2022
+## [0.5.3](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.3) - 08.06.2022
+### Fixed
+- `convert(., .)` works in both direction from/to semiring/number for
+  numeric type semirings
+
+## [0.5.2](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.2) - 08.06.2022
 ### Fixed
 - `isless(x, y)` not defined for `Ordered` semirings (e.g. LogSemiring, TropicalSemiring,...)
 
