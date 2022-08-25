@@ -1,6 +1,6 @@
 # Releases
 
-## [0.5.4](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.5) - 26.07.2022
+## [0.5.5](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.5) - 26.07.2022
 ### Fixed
 - using faster implementation of `logaddexp` function (with small loss
   of accuracy).
