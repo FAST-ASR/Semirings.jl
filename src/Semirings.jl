@@ -3,7 +3,7 @@
 module Semirings
 
 # Necessary for the logarithmic semiring
-import LogExpFunctions: logaddexp
+#import LogExpFunctions: logaddexp
 
 # Strings extension
 export StringZero

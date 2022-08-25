@@ -3,9 +3,5 @@ uuid = "900aad66-9ca5-44d4-b043-321c62cb7767"
 authors = ["Lucas Ondel <lucas.ondel@gmail.com>", "Martin Kocour <ikocour@fit.vut.cz>"]
 version = "0.5.4"
 
-[deps]
-LogExpFunctions = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
-
 [compat]
-LogExpFunctions = "0.3"
 julia = "1.6"

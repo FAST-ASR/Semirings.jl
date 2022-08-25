@@ -26,6 +26,26 @@ Base.one(::BoolSemiring) = BoolSemiring(true)
 Logarithmic semiring
 ======================================================================#
 
+function logaddexp(x::Tx, y::Ty) where {Tx<:AbstractFloat,Ty<:AbstractFloat}
+	T = promote_type(Tx, Ty)
+	if isnan(x) || isnan(y) return T(NaN) end
+
+    diff = zero(T)
+    if x < y
+        diff = x - y
+        x = y
+    else y < x
+        diff = y - x
+    end
+
+    if diff >= log(eps(T))
+        return x + log1p(exp(diff))
+    end
+    return x
+end
+logaddexp(x::Tx, y::Ty) where {Tx,Ty} = logaddexp(float(Tx)(x), float(Ty)(y))
+
+
 """
     struct LogSemiring{T<:Real} <: Semiring{T}
         val::T
