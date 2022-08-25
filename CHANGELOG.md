@@ -1,9 +1,12 @@
 # Releases
 
-## [0.5.4](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.4) - 26.07.2022
+## [0.5.4](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.5) - 26.07.2022
 ### Fixed
 - using faster implementation of `logaddexp` function (with small loss
   of accuracy).
+  
+## [0.5.4](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.4) - 26.07.2022
+### Fixed
 - `hash` not defined for `Semiring` nor for `Monoid` leading to a search issues.
 
 ## [0.5.3](https://github.com/FAST-ASR/Semirings.jl/releases/tag/v0.5.3) - 08.06.2022
