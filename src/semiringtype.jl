@@ -23,3 +23,16 @@ Base.show(io::IO, m::MIME"text/plain", x::Semiring) = print(io, val(x))
 
 # To allow conversion of a Semiring to a "classical" number.
 (t::Type{<:Number})(x::K) where K<:Semiring = t(val(x))
+
+function Base.:*(x::Semiring, n::Integer)
+    z = zero(x)
+    if n > 0
+        for _ in 1:n
+            z += x
+        end
+    elseif n < 0
+        throw(ArgumentError("Multiplication via repeated addition is only supported for positive integer."))
+    end
+    z
+end
+

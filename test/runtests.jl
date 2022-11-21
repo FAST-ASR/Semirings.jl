@@ -22,7 +22,7 @@ end
     a, b = SequenceMonoid(tuple(1)), SequenceMonoid(tuple("a"))
     @test val(a * b) == tuple(1, "a")
 
-    @test SequenceMonoid((SubString("a"),)) == SequenceMonoid((String("a"),)) 
+    @test SequenceMonoid((SubString("a"),)) == SequenceMonoid((String("a"),))
     @test SequenceMonoid((SubString("a"),)) in keys(Dict(SequenceMonoid((String("a"),)) => 1))
     @test SequenceMonoid((String("a"),)) in keys(Dict(SequenceMonoid((SubString("a"),)) => 1))
 end
@@ -253,6 +253,8 @@ end
     for T in Ts
         x, y = zero(T), one(T)
         @test zero(T) == zero(x)
+        @test one(T) * 0 == zero(T)
+        @test one(T) * 3 == one(T) + one(T) + one(T)
         @test iszero(x)
         @test ! iszero(y)
         @test one(T) == one(y)
